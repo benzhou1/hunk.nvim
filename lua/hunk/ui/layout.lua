@@ -4,7 +4,7 @@ local config = require("hunk.config")
 local M = {}
 
 local function create_vertical_split()
-  vim.api.nvim_command("vsplit")
+  vim.api.nvim_command("rightbelow vsplit")
   local winid = vim.api.nvim_get_current_win()
   -- vim.api.nvim_set_option_value("diff", true, {
   --   win = winid,
@@ -13,7 +13,7 @@ local function create_vertical_split()
 end
 
 local function create_horizontal_split()
-  vim.api.nvim_command("split")
+  vim.api.nvim_command("rightbelow split")
   local winid = vim.api.nvim_get_current_win()
   return winid
 end
