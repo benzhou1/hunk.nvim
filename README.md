@@ -103,6 +103,22 @@ hunk.setup({
 })
 ```
 
+### Highlights
+
+Most of the hunk colors can be configured by defining your own highlight overrides. Refer to the below table for a list
+of available highlights:
+
+| Highlight                   | Default                    |
+| --------------------------- | -------------------------- |
+| `HunkFileTreeFileAdded`     | `Green`                    |
+| `HunkFileTreeFileDeleted`   | `Red`                      |
+| `HunkFileTreeFileModified`  | `Blue`                     |
+| `HunkFileTreeIconAdded`     | `HunkFileTreeFileAdded`    |
+| `HunkFileTreeIconDeleted`   | `HunkFileTreeFileDeleted`  |
+| `HunkFileTreeIconModified`  | `HunkFileTreeFileModified` |
+| `HunkFileTreeDirIcon`       | `Yellow`                   |
+| `HunkFileTreeSelectionIcon` | `Comment`                  |
+
 ### Using Hooks
 
 Hooks can be used to bind keys with "complex" logic, or to set buffer/window local options on the

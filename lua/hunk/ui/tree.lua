@@ -27,14 +27,14 @@ local function get_icon(path)
   end
 end
 
-local function get_change_color(change)
+local function get_change_color(prefix, change)
   if change.type == "added" then
-    return "Green"
+    return prefix .. "Added"
   end
   if change.type == "deleted" then
-    return "Red"
+    return prefix .. "Deleted"
   end
-  return "Blue"
+  return prefix .. "Modified"
 end
 
 local function file_tree_to_nodes(file_tree)
@@ -52,7 +52,7 @@ local function file_tree_to_nodes(file_tree)
     if node.type == "dir" then
       highlight = "Green"
     elseif node.type == "file" then
-      highlight = get_change_color(node.change)
+      highlight = get_change_color("HunkFileTreeFile", node.change)
     else
       error("Unknown node type '" .. node.type .. "'")
     end
@@ -164,6 +164,7 @@ local M = {}
 function M.create(opts)
   local tree = NuiTree({
     winid = opts.winid,
+    bufnr = vim.api.nvim_win_get_buf(opts.winid),
     nodes = {},
 
     prepare_node = function(node)
@@ -188,14 +189,14 @@ function M.create(opts)
         selection_icon = get_file_icon(node.change)
       end
 
-      line:append(selection_icon .. " ", "Comment")
+      line:append(selection_icon .. " ", "HunkFileTreeSelectionIcon")
 
       if node.type == "dir" then
         local icon = config.icons.folder_closed
         if node:is_expanded() then
           icon = config.icons.folder_open
         end
-        line:append(icon .. " ", "Yellow")
+        line:append(icon .. " ", "HunkFileTreeDirIcon")
       end
 
       for _, text in ipairs(node.line) do

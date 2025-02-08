@@ -76,3 +76,13 @@ run channel="stable": (prepare channel)
     --noplugin \
     -u tests/config.lua \
     -c "DiffEditor $TMPDIR/hunk-nvim-run/left $TMPDIR/hunk-nvim-run/right $TMPDIR/hunk-nvim-run/out"
+
+run-local:
+  #!/usr/bin/env bash
+  set -eo pipefail
+
+  rm -r $TMPDIR/hunk-nvim-run/ || true
+  cp -a dev/fixture $TMPDIR/hunk-nvim-run/
+
+  nvim \
+    -c "DiffEditor $TMPDIR/hunk-nvim-run/left $TMPDIR/hunk-nvim-run/right $TMPDIR/hunk-nvim-run/out"
