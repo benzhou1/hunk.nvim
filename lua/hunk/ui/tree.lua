@@ -256,14 +256,15 @@ function M.create(opts)
   for _, chord in ipairs(utils.into_table(config.keys.tree.toggle_file)) do
     vim.keymap.set("n", chord, function()
       local node = tree:get_node()
-      if node.type == "file" then
-        opts.on_toggle(node.change, callback_opts)
+      if node and node.type == "file" then
+        opts.on_toggle(node.change, nil, callback_opts)
         return
       end
 
-      local changeset = get_changeset_recursive(tree, node)
+      local changeset = get_changeset_recursive(node)
+      local state = get_dir_selection_state(node)
       for _, change in ipairs(changeset) do
-        opts.on_toggle(change, callback_opts)
+        opts.on_toggle(change, state ~= "all", callback_opts)
       end
     end, { buffer = buf })
   end

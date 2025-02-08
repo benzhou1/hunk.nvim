@@ -7,18 +7,25 @@ local M = {}
 
 local CONTEXT
 
-local function toggle_file(change)
+local function value_or_default(value, default)
+  if value ~= nil then
+    return value
+  end
+  return default
+end
+
+local function toggle_file(change, value)
   for _, hunk in ipairs(change.hunks) do
     for i in utils.hunk_lines(hunk.left) do
-      change.selected_lines.left[i] = not change.selected
+      change.selected_lines.left[i] = value_or_default(value, not change.selected)
     end
 
     for i in utils.hunk_lines(hunk.right) do
-      change.selected_lines.right[i] = not change.selected
+      change.selected_lines.right[i] = value_or_default(value, not change.selected)
     end
   end
 
-  change.selected = not change.selected
+  change.selected = value_or_default(value, not change.selected)
 end
 
 local function toggle_lines(change, side, lines, value)
@@ -168,8 +175,8 @@ function M.start(left, right, output)
       left_file, right_file = open_file(layout, opts.tree, change)
       vim.api.nvim_set_current_win(layout.tree)
     end,
-    on_toggle = function(change, opts)
-      toggle_file(change)
+    on_toggle = function(change, value, opts)
+      toggle_file(change, value)
 
       left_file.render()
       right_file.render()
