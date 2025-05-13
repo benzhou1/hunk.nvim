@@ -1,9 +1,3 @@
-build:
-    clojure -T:build build
-
-release:
-    clojure -T:build release
-
 [macos]
 prepare-nvim channel:
   #!/usr/bin/env bash
