@@ -74,6 +74,9 @@ hunk.setup({
  
       prev_hunk = { "[h" },
       next_hunk = { "]h" },
+
+      -- Jump between the left and right diff view
+      toggle_focus = { "<Tab>" },
     },
   },
 

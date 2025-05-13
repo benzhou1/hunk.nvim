@@ -127,6 +127,14 @@ local function open_file(layout, tree, change)
       tree.render()
       return
     end
+
+    if event.type == "toggle-focus" then
+      local win = left_file.win
+      if event.side == "left" then
+        win = right_file.win
+      end
+      vim.api.nvim_set_current_win(win)
+    end
   end
 
   left_file = ui.file.create(layout.left, {

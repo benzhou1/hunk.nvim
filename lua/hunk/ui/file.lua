@@ -150,6 +150,15 @@ function M.create(window, params)
     end, { buffer = buf })
   end
 
+  for _, chord in ipairs(utils.into_table(config.keys.diff.toggle_focus)) do
+    vim.keymap.set("n", chord, function()
+      params.on_event({
+        type = "toggle-focus",
+        side = params.side,
+      })
+    end, { buffer = buf })
+  end
+
   config.hooks.on_diff_mount({ buf = buf, win = window })
 
   local function apply_signs()
