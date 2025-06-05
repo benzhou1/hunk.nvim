@@ -12,7 +12,7 @@ describe("diff patching", function()
       local left_file_content = api.fs.read_file_as_lines(change.left_filepath)
       local right_file_content = api.fs.read_file_as_lines(change.right_filepath)
       local result = api.diff.apply_diff(left_file_content, right_file_content, change)
-      assert.are.same(result, left_file_content)
+      assert.are.same(left_file_content, result)
     end)
 
     it("should apply left before right", function()
@@ -32,12 +32,12 @@ describe("diff patching", function()
         },
       }
       local result = api.diff.apply_diff(left_file_content, right_file_content, change)
-      assert.are.same(result, {
+      assert.are.same({
         "a",
         "a1",
         "c",
         "d",
-      })
+      }, result)
     end)
 
     it("should apply files with no left correctly", function()
@@ -53,11 +53,11 @@ describe("diff patching", function()
         },
       }
       local result = api.diff.apply_diff(left_file_content, right_file_content, change)
-      assert.are.same(result, {
+      assert.are.same({
         "a",
         "b",
         "c",
-      })
+      }, result)
     end)
 
     it("should apply files with no right correctly", function()
@@ -73,10 +73,10 @@ describe("diff patching", function()
         right = {},
       }
       local result = api.diff.apply_diff(left_file_content, right_file_content, change)
-      assert.are.same(result, {
+      assert.are.same({
         "a",
         "b",
-      })
+      }, result)
     end)
   end)
 
@@ -126,6 +126,47 @@ describe("diff patching", function()
         "b",
         "changed",
         "d",
+      }, result)
+    end)
+  end)
+
+  it("should maintain line ordering within a hunk", function()
+    fixtures.with_workspace(function(workspace)
+      fixtures.prepare_workspace(workspace, {
+        filea = {
+          "a1",
+          "b1",
+          "c1",
+          "d1",
+        },
+      }, {
+        filea = {
+          "a1",
+          "b2",
+          "c2",
+          "d1",
+        },
+      })
+
+      local changeset = api.changeset.load_changeset(workspace.left, workspace.right)
+
+      local change = changeset.filea
+      local left_file_content = api.fs.read_file_as_lines(change.left_filepath)
+      local right_file_content = api.fs.read_file_as_lines(change.right_filepath)
+      change.selected_lines = {
+        left = {
+          [2] = true,
+        },
+        right = {
+          [2] = true,
+        },
+      }
+      local result = api.diff.apply_diff(left_file_content, right_file_content, change)
+      assert.are.same({
+        "a1",
+        "b2",
+        "c1",
+        "d1",
       }, result)
     end)
   end)
