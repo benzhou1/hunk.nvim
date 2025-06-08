@@ -82,6 +82,11 @@ function M.create(window, params)
     change = params.change,
   }
 
+  local map_opts = {
+    buffer = buf,
+    nowait = true,
+  }
+
   for _, chord in ipairs(utils.into_table(config.keys.diff.toggle_line)) do
     vim.keymap.set("n", chord, function()
       local line = vim.api.nvim_win_get_cursor(window)[1]
@@ -90,7 +95,7 @@ function M.create(window, params)
         lines = { line },
         file = File,
       })
-    end, { buffer = buf })
+    end, map_opts)
 
     vim.keymap.set("v", chord, function()
       local start_line = vim.fn.getpos(".")[2]
@@ -111,7 +116,7 @@ function M.create(window, params)
           file = File,
         })
       end)
-    end, { buffer = buf })
+    end, map_opts)
   end
 
   for _, chord in ipairs(utils.into_table(config.keys.diff.toggle_hunk)) do
@@ -121,7 +126,7 @@ function M.create(window, params)
         line = vim.api.nvim_win_get_cursor(window)[1],
         file = File,
       })
-    end, { buffer = buf })
+    end, map_opts)
   end
 
   for _, chord in ipairs(utils.into_table(config.keys.diff.prev_hunk)) do
@@ -135,7 +140,7 @@ function M.create(window, params)
           break
         end
       end
-    end, { buffer = buf })
+    end, map_opts)
   end
 
   for _, chord in ipairs(utils.into_table(config.keys.diff.next_hunk)) do
@@ -148,7 +153,7 @@ function M.create(window, params)
           break
         end
       end
-    end, { buffer = buf })
+    end, map_opts)
   end
 
   for _, chord in ipairs(utils.into_table(config.keys.diff.toggle_focus)) do
@@ -157,7 +162,7 @@ function M.create(window, params)
         type = "toggle-focus",
         side = params.side,
       })
-    end, { buffer = buf })
+    end, map_opts)
   end
 
   config.hooks.on_diff_mount({ buf = buf, win = window })
