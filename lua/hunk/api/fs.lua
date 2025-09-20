@@ -1,18 +1,47 @@
 local M = {}
 
-function M.list_files_recursively(dir)
-  local files = {}
-  local p = io.popen('find "' .. dir .. '" -type f')
-  if not p then
-    return {}
+local uv = vim.loop
+
+function M.scan_dir(dir)
+  dir = (dir:gsub("/+$", ""))
+  local out = {}
+
+  local function relative_path(full)
+    return full:sub(#dir + 2)
   end
-  for file in p:lines() do
-    table.insert(files, file)
+
+  local function walk(path)
+    local fd = uv.fs_scandir(path)
+    if not fd then
+      return
+    end
+
+    while true do
+      local name, ftype = uv.fs_scandir_next(fd)
+      if not name then
+        break
+      end
+
+      local full = path .. "/" .. name
+
+      if ftype == "directory" then
+        walk(full)
+      elseif ftype == "file" then
+        local file_path = relative_path(full)
+        out[file_path] = { path = file_path }
+      elseif ftype == "link" then
+        local file_path = relative_path(full)
+        out[file_path] = {
+          path = file_path,
+          symlink = uv.fs_readlink(full),
+        }
+      end
+    end
   end
-  p:close()
-  return vim.tbl_map(function(file)
-    return string.sub(file, #dir + 2)
-  end, files)
+
+  walk(dir)
+
+  return out
 end
 
 function M.read_file(file_path)
@@ -38,9 +67,9 @@ function M.make_parents(file_path)
   vim.fn.mkdir(parent_dir, "p")
 end
 
-function M.copy_file(src, dst)
+function M.move_file(src, dst)
   M.make_parents(dst)
-  vim.fn.system({ "cp", src, dst })
+  vim.fn.system({ "mv", src, dst })
 end
 
 function M.rm_file(file)

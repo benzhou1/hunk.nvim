@@ -48,9 +48,9 @@ function M.prepare_simple_workspace(workspace)
 end
 
 function M.read_dir(dir)
-  local files = fs.list_files_recursively(dir)
+  local files = fs.scan_dir(dir)
   local result = {}
-  for _, file in ipairs(files) do
+  for file, _ in pairs(files) do
     local content = fs.read_file_as_lines(dir .. "/" .. file)
     result[file] = content
   end

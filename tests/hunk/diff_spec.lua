@@ -9,16 +9,16 @@ describe("diff patching", function()
 
     it("should do nothing if no lines are selected", function()
       local change = changeset.modified
-      local left_file_content = api.fs.read_file_as_lines(change.left_filepath)
-      local right_file_content = api.fs.read_file_as_lines(change.right_filepath)
+      local left_file_content = api.fs.read_file_as_lines(change.left_file.path)
+      local right_file_content = api.fs.read_file_as_lines(change.right_file.path)
       local result = api.diff.apply_diff(left_file_content, right_file_content, change)
       assert.are.same(left_file_content, result)
     end)
 
     it("should apply left before right", function()
       local change = changeset.modified
-      local left_file_content = api.fs.read_file_as_lines(change.left_filepath)
-      local right_file_content = api.fs.read_file_as_lines(change.right_filepath)
+      local left_file_content = api.fs.read_file_as_lines(change.left_file.path)
+      local right_file_content = api.fs.read_file_as_lines(change.right_file.path)
       change.selected_lines = {
         left = {
           [1] = false,
@@ -42,8 +42,8 @@ describe("diff patching", function()
 
     it("should apply files with no left correctly", function()
       local change = changeset.added
-      local left_file_content = api.fs.read_file_as_lines(change.left_filepath)
-      local right_file_content = api.fs.read_file_as_lines(change.right_filepath)
+      local left_file_content = api.fs.read_file_as_lines(change.left_file.path)
+      local right_file_content = api.fs.read_file_as_lines(change.right_file.path)
       change.selected_lines = {
         left = {},
         right = {
@@ -62,8 +62,8 @@ describe("diff patching", function()
 
     it("should apply files with no right correctly", function()
       local change = changeset.deleted
-      local left_file_content = api.fs.read_file_as_lines(change.left_filepath)
-      local right_file_content = api.fs.read_file_as_lines(change.right_filepath)
+      local left_file_content = api.fs.read_file_as_lines(change.left_file.path)
+      local right_file_content = api.fs.read_file_as_lines(change.right_file.path)
       change.selected_lines = {
         left = {
           [1] = false,
@@ -102,8 +102,8 @@ describe("diff patching", function()
       local changeset = api.changeset.load_changeset(workspace.left, workspace.right)
 
       local change = changeset.modified
-      local left_file_content = api.fs.read_file_as_lines(change.left_filepath)
-      local right_file_content = api.fs.read_file_as_lines(change.right_filepath)
+      local left_file_content = api.fs.read_file_as_lines(change.left_file.path)
+      local right_file_content = api.fs.read_file_as_lines(change.right_file.path)
       change.selected_lines = {
         left = {
           [1] = true,
@@ -151,8 +151,8 @@ describe("diff patching", function()
       local changeset = api.changeset.load_changeset(workspace.left, workspace.right)
 
       local change = changeset.filea
-      local left_file_content = api.fs.read_file_as_lines(change.left_filepath)
-      local right_file_content = api.fs.read_file_as_lines(change.right_filepath)
+      local left_file_content = api.fs.read_file_as_lines(change.left_file.path)
+      local right_file_content = api.fs.read_file_as_lines(change.right_file.path)
       change.selected_lines = {
         left = {
           [2] = true,

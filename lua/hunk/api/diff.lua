@@ -4,8 +4,12 @@ local fs = require("hunk.api.fs")
 local M = {}
 
 function M.diff_file(left, right)
-  local left_content = fs.read_file(left) or ""
-  local right_content = fs.read_file(right) or ""
+  if left.symlink or right.symlink then
+    return {}
+  end
+
+  local left_content = fs.read_file(left.path) or ""
+  local right_content = fs.read_file(right.path) or ""
   local hunks = vim.diff(left_content, right_content, {
     result_type = "indices",
   })

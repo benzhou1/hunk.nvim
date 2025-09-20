@@ -45,7 +45,21 @@ local function create_buffer(params)
 
   buf = vim.api.nvim_create_buf(false, false)
 
-  local lines = api.fs.read_file_as_lines(params.change[params.side .. "_filepath"])
+  local file
+  if params.side == "left" then
+    file = params.change.left_file
+  elseif params.side == "right" then
+    file = params.change.right_file
+  else
+    error("Unknown side " .. params.side)
+  end
+
+  local lines = {}
+  if file.symlink then
+    lines = { file.symlink }
+  else
+    lines = api.fs.read_file_as_lines(file.path)
+  end
   vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
 
   for key, value in pairs(bufopts) do

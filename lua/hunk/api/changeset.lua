@@ -8,9 +8,9 @@ local function merge_lists(a, b)
   local seen = {}
 
   local function add_unique(list)
-    for _, item in ipairs(list) do
-      if not seen[item] then
-        seen[item] = true
+    for path in pairs(list) do
+      if not seen[path] then
+        seen[path] = true
       end
     end
   end
@@ -22,32 +22,34 @@ local function merge_lists(a, b)
 end
 
 function M.load_changeset(left, right)
-  local left_files = fs.list_files_recursively(left)
-  local right_files = fs.list_files_recursively(right)
+  local left_files = fs.scan_dir(left)
+  local right_files = fs.scan_dir(right)
   local files = merge_lists(left_files, right_files)
 
   local changeset = {}
 
   for _, file in ipairs(files) do
-    local has_left = utils.included_in_table(left_files, file)
-    local has_right = utils.included_in_table(right_files, file)
+    local left_file = left_files[file]
+    local right_file = right_files[file]
 
     local type = "modified"
-    if not has_left then
+    if not left_file then
+      left_file = {}
       type = "added"
     end
-    if not has_right then
+    if not right_file then
+      right_file = {}
       type = "deleted"
     end
 
-    local left_filepath = left .. "/" .. file
-    local right_filepath = right .. "/" .. file
+    left_file.path = left .. "/" .. file
+    right_file.path = right .. "/" .. file
 
     changeset[file] = {
       type = type,
 
-      left_filepath = left_filepath,
-      right_filepath = right_filepath,
+      left_file = left_file,
+      right_file = right_file,
       filepath = file,
 
       selected = false,
@@ -55,7 +57,7 @@ function M.load_changeset(left, right)
         left = {},
         right = {},
       },
-      hunks = diff.diff_file(left_filepath, right_filepath),
+      hunks = diff.diff_file(left_file, right_file),
     }
   end
 
@@ -67,7 +69,7 @@ local function write_change(change, output_dir)
   local output_file = output_dir .. "/" .. change.filepath
 
   if change.type == "deleted" and not change.selected and not any_selected then
-    fs.copy_file(change.left_filepath, output_file)
+    fs.move_file(change.left_file.path, output_file)
     return
   end
 
@@ -82,19 +84,19 @@ local function write_change(change, output_dir)
   end
 
   if change.selected and change.type ~= "deleted" then
-    fs.copy_file(change.right_filepath, output_file)
+    fs.move_file(change.right_file.path, output_file)
     return
   end
 
   if any_selected then
-    local left_file_content = fs.read_file_as_lines(change.left_filepath)
-    local right_file_content = fs.read_file_as_lines(change.right_filepath)
+    local left_file_content = fs.read_file_as_lines(change.left_file.path)
+    local right_file_content = fs.read_file_as_lines(change.right_file.path)
     local result = diff.apply_diff(left_file_content, right_file_content, change)
     fs.write_file(output_dir .. "/" .. change.filepath, result)
     return
   end
 
-  fs.copy_file(change.left_filepath, output_file)
+  fs.move_file(change.left_file.path, output_file)
 end
 
 function M.write_changeset(changeset, output_dir)
