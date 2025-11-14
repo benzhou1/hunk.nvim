@@ -41,12 +41,17 @@ local M = {
   },
 
   icons = {
+    enable_file_icons = true,
+
     selected = "󰡖",
     deselected = "",
     partially_selected = "󰛲",
 
     folder_open = "",
     folder_closed = "",
+
+    expanded = "",
+    collapsed = "",
   },
 
   hooks = {

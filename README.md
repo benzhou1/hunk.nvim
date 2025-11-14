@@ -94,14 +94,18 @@ hunk.setup({
   },
 
   icons = {
+    enable_file_icons = true,
+
     selected = "󰡖",
     deselected = "",
     partially_selected = "󰛲",
 
     folder_open = "",
     folder_closed = "",
-  },
 
+    expanded = "",
+    collapsed = "",
+  },
   -- Called right after each window and buffer are created.
   hooks = {
     ---@param _context { buf: number, tree: NuiTree, opts: table }

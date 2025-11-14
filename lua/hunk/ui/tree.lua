@@ -15,6 +15,10 @@ local function get_file_extension(path)
 end
 
 local function get_icon(path)
+  if not config.icons.enable_file_icons then
+    return nil
+  end
+
   local has_mini_icons, mini_icons = pcall(require, "mini.icons")
 
   if has_mini_icons then
@@ -174,9 +178,11 @@ function M.create(opts)
 
       if node:has_children() then
         if node:is_expanded() then
-          line:append(" ", "Comment")
+          local icon = config.icons.expanded or ""
+          line:append(icon .. " ", "Comment")
         else
-          line:append(" ", "Comment")
+          local icon = config.icons.collapsed or ""
+          line:append(icon .. " ", "Comment")
         end
       else
         line:append("  ")
