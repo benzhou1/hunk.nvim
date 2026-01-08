@@ -63,6 +63,12 @@ function M.create_layout()
 
   vim.api.nvim_set_current_win(tree_window)
 
+  vim.api.nvim_create_autocmd({ "VimResized" }, {
+    callback = function(event)
+      resize_tree(tree_window, left_diff, right_diff, config.ui.tree.width, config.ui.layout)
+    end,
+  })
+
   return {
     tree = tree_window,
     left = left_diff,
@@ -70,4 +76,5 @@ function M.create_layout()
   }
 end
 
+M.resize_tree = resize_tree
 return M
