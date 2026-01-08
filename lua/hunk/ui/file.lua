@@ -210,7 +210,7 @@ function M.create(window, params)
     end, map_opts("Toggle focused window between left/right"))
   end
 
-  config.hooks.on_diff_mount({ buf = buf, win = window })
+  config.hooks.on_diff_mount({ buf = buf, win = window, params = params, File = File })
 
   local function apply_signs()
     api.signs.clear_signs(buf)

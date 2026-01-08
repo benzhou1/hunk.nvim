@@ -224,6 +224,7 @@ function M.create(opts)
   end
 
   local callback_opts = { tree = Component }
+  opts.Component = Component
 
   for _, chord in ipairs(utils.into_table(config.keys.tree.open_file)) do
     vim.keymap.set("n", chord, function()

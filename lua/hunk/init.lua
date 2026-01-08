@@ -223,6 +223,7 @@ function M.start(left, right, output)
   local left_file, right_file
   local tree = ui.tree.create({
     winid = layout.tree,
+    layout = layout,
     changeset = changeset,
     on_open = function(change, opts)
       left_file, right_file = open_file(layout, opts.tree, change)
